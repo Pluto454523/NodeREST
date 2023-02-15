@@ -5,8 +5,10 @@ const app = express();
 
 // connect to database
 const db = new sqlite3.Database('./Database/Book.sqlite');
+
 // parse incoming requests 
 app.use(express.json());
+
 // create books table if it doesn't exist 
 db.run(`CREATE TABLE IF NOT EXISTS books ( 
     id INTEGER PRIMARY KEY,
