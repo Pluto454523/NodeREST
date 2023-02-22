@@ -13,19 +13,22 @@ app.use(express.json());
 db.run(`CREATE TABLE IF NOT EXISTS books ( 
     id INTEGER PRIMARY KEY,
     title TEXT,
-    author TEXT
+    author TEXT 
 )`)
 
 
 
-// route to get all books app.get('/books', (req, res) => {
-db.all('SELECT * FROM books', (err, rows) => {
-    if (err) {
-        res.status(500).send(err);
-    } else {
-        res.json(rows);
-    }
-});
+// route to get all books 
+app.get('/books', (req, res) => {
+    db.all('SELECT * FROM books', (err, rows) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.json(rows);
+        }
+    })
+})
+
 
 // route to get a book by id
 app.get('/books/:id', (req, res) => {
@@ -81,5 +84,5 @@ app.delete('/books/:id', (req, res) => {
         }
     });
 });
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}...`))
