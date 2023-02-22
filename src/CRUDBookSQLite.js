@@ -2,7 +2,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const app = express();
-
+const tableName = "books"
 // connect to database
 const db = new sqlite3.Database('./Database/Book.sqlite');
 
@@ -10,7 +10,7 @@ const db = new sqlite3.Database('./Database/Book.sqlite');
 app.use(express.json());
 
 // create books table if it doesn't exist 
-db.run(`CREATE TABLE IF NOT EXISTS books ( 
+db.run(`CREATE TABLE IF NOT EXISTS ${tableName} ( 
     id INTEGER PRIMARY KEY,
     title TEXT,
     author TEXT 
@@ -20,7 +20,7 @@ db.run(`CREATE TABLE IF NOT EXISTS books (
 
 // route to get all books 
 app.get('/books', (req, res) => {
-    db.all('SELECT * FROM books', (err, rows) => {
+    db.all(`SELECT * FROM ${tableName}`, (err, rows) => {
         if (err) {
             res.status(500).send(err);
         } else {
@@ -32,7 +32,7 @@ app.get('/books', (req, res) => {
 
 // route to get a book by id
 app.get('/books/:id', (req, res) => {
-    db.get('SELECT * FROM books WHERE id = ?', req.params.id, (err, row) => {
+    db.get(`SELECT * FROM ${tableName} WHERE id = ?`, req.params.id, (err, row) => {
         if (err) {
             res.status(500).send(err);
         } else {
@@ -50,7 +50,7 @@ app.get('/books/:id', (req, res) => {
 // route to create a new book
 app.post('/books', (req, res) => {
     const book = req.body
-    db.run('INSERT INTO books (title, author) VALUES (?, ?)', book.title, book.author, function (err) {
+    db.run(`INSERT INTO ${tableName} (title, author) VALUES (?, ?)`, book.title, book.author, function (err) {
         if (err) {
             res.status(500).send(err)
         } else {
@@ -63,7 +63,7 @@ app.post('/books', (req, res) => {
 // route to update a book
 app.put('/books/:id', (req, res) => {
     const book = req.body;
-    db.run('UPDATE books SET title= ?, author = ? WHERE id = ?', book.title, book.author, req.params.id, function (err) {
+    db.run(`UPDATE ${tableName} SET title= ?, author = ? WHERE id = ?`, book.title, book.author, req.params.id, function (err) {
         if (err) {
             res.status(500).send(err);
         } else {
@@ -76,7 +76,7 @@ app.put('/books/:id', (req, res) => {
 
 // route to delete a book
 app.delete('/books/:id', (req, res) => {
-    db.run('DELETE FROM books WHERE id = ?', req.params.id, function (err) {
+    db.run(`DELETE FROM ${tableName} WHERE id = ?`, req.params.id, function (err) {
         if (err) {
             res.status(500).send(err);
         } else {
