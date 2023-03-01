@@ -42,16 +42,15 @@ app.get('/books', (req, res) => {
 
 // route to get a book by id
 app.get('/books/:id', (req, res) => {
-    db.get(`SELECT * FROM ${tableName} WHERE id = ?`, req.params.id, (err, row) => {
-        if (err) {
-            res.status(500).send(err);
+
+    Book.findByPk(req.params.id).then((book) => {
+        if (!book) {
+            res.status(404).send("Book not found")
         } else {
-            if (!row) {
-                res.status(404).send('Book not found');
-            } else {
-                res.json(row);
-            }
+            res.json(book)
         }
+    }).catch((err) => {
+        res.status(500).send(err)
     });
 });
 
@@ -59,26 +58,27 @@ app.get('/books/:id', (req, res) => {
 
 // route to create a new book
 app.post('/books', (req, res) => {
-    const book = req.body
-    db.run(`INSERT INTO ${tableName} (title, author) VALUES (?, ?)`, book.title, book.author, function (err) {
-        if (err) {
-            res.status(500).send(err)
-        } else {
-            book.id = this.lastID
-            res.send(book)
-        }
-    })
+    Book.create(req.body).then((book) => {
+        res.send(book)
+    }).catch((err) => {
+        res.status(500).send(err)
+    });
 })
 
 // route to update a book
 app.put('/books/:id', (req, res) => {
-    const book = req.body;
-    db.run(`UPDATE ${tableName} SET title= ?, author = ? WHERE id = ?`, book.title, book.author, req.params.id, function (err) {
-        if (err) {
-            res.status(500).send(err);
+    Book.findByPk(req.params.id).then((book) => {
+        if (!book) {
+            res.status(404).send("Book not found")
         } else {
-            res.send(book);
+            book.update(req.body).then(() => {
+                res.send(book)
+            }).catch((err) => {
+                res.status(500).send(err)
+            });
         }
+    }).catch((err) => {
+        res.status(500).send(err)
     });
 });
 
@@ -86,12 +86,18 @@ app.put('/books/:id', (req, res) => {
 
 // route to delete a book
 app.delete('/books/:id', (req, res) => {
-    db.run(`DELETE FROM ${tableName} WHERE id = ?`, req.params.id, function (err) {
-        if (err) {
-            res.status(500).send(err);
+    Book.findByPk(req.params.id).then((book) => {
+        if (!book) {
+            res.status(404).send("Book not found")
         } else {
-            res.send({});
+            book.destroy().then(() => { 
+                res.send({})
+            }).catch((err) => {
+                res.status(500).send(err)
+            });
         }
+    }).catch((err) => {
+        res.status(500).send(err)
     });
 });
 const port = process.env.PORT || 8080;
