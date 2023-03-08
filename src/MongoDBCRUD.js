@@ -5,6 +5,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+
 // Database connection
 mongoose.connect(
     "mongodb://admin:HXNnid81434@node42150-pluto.proen.app.ruk-com.cloud:11527",
@@ -13,6 +14,7 @@ mongoose.connect(
         useUnifiedTopology: true,
     }
 );
+
 const Book = mongoose.model("Book", {
     id: Number,
     title: String,
@@ -22,6 +24,7 @@ const Book = mongoose.model("Book", {
 
 
 const app = express(); app.use(bodyParser.json());
+
 // Create
 app.post("/books", async (req, res) => {
     try {
@@ -33,6 +36,7 @@ app.post("/books", async (req, res) => {
         res.status(500).send(error);
     }
 });
+
 // Read all
 app.get("/books", async (req, res) => {
     try {
@@ -53,6 +57,7 @@ app.get("/books/:id", async (req, res) => {
         res.status(500).send(error);
     }
 });
+
 // Update
 app.put("/books/:id", async (req, res) => {
     try {
