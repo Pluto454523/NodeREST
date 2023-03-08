@@ -1,31 +1,28 @@
-// Description : REST API With MongoDB
-// npm install express mongoose body-parser
-// Run this file with node MongoDBREST.js
-// Test with Postman
 
+// Description: REST API with MongoDB
+// npm install express mongoose body-parser // Run this file with node MongoDBREST.js
+// Test with Postman
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
 // Database connection
 mongoose.connect(
-    "mongodb://admin://",
+    "mongodb://admin:SBFsqa14913@node40731-noderest.proen.app.ruk-com.cloud:11344",
     {
-        userNewUrlParser: true,
+        useNewUrlParser: true,
         useUnifiedTopology: true,
     }
 );
-
 const Book = mongoose.model("Book", {
     id: Number,
     title: String,
     author: String,
 });
 
-const app = express();
-app.use(bodyParser.json());
 
-//Create
+
+const app = express(); app.use(bodyParser.json());
+// Create
 app.post("/books", async (req, res) => {
     try {
         const book = new Book(req.body);
@@ -36,19 +33,19 @@ app.post("/books", async (req, res) => {
         res.status(500).send(error);
     }
 });
-
-//Read all
+// Read all
 app.get("/books", async (req, res) => {
     try {
-        const books = await Book.find();
-        res.send(books);
+        const books = await Book.find(); res.send(books);
     } catch (error) {
         res.status(500).send(error);
     }
 });
 
-//Read one
-app.get("/books:id", async (req, res) => {
+
+
+// Read one
+app.get("/books/:id", async (req, res) => {
     try {
         const book = await Book.findOne(req.params.id);
         res.send(book);
@@ -56,10 +53,8 @@ app.get("/books:id", async (req, res) => {
         res.status(500).send(error);
     }
 });
-
-
-//Update
-app.put("/books:id", async (req, res) => {
+// Update
+app.put("/books/:id", async (req, res) => {
     try {
         const book = await Book.findOneAndUpdate(req.params.id, req.body, {
             new: true,
@@ -71,19 +66,18 @@ app.put("/books:id", async (req, res) => {
 });
 
 
+
 // Delete
-app.delete("/books:id", async (req, res) => {
+app.delete("/books/:id", async (req, res) => {
     try {
         const book = await Book.findOneAndDelete(req.params.id);
         res.send(book);
     } catch (error) {
-        res.status(500).send(error);
     }
+    res.status(500).send(error);
 });
-
 // Start the server
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server started at http://localhost:${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
 });
+console.log(`Server started at http://localhost:${PORT}`);
